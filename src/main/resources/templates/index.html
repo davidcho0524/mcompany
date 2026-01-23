@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div}, 'dashboard')}">
+
+<body>
+    <div>
+        <h2>Dashboard</h2>
+        <p class="mb-4">Welcome back to the Teacher Management System.</p>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3 shadow-sm">
+                    <div class="card-header bg-transparent border-0">Total Lectures</div>
+                    <div class="card-body">
+                        <h2 class="card-title fw-bold">0</h2>
+                        <p class="card-text"><small>Scheduled & Completed</small></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3 shadow-sm">
+                    <div class="card-header bg-transparent border-0">Paid Lectures</div>
+                    <div class="card-body">
+                        <h2 class="card-title fw-bold">0</h2>
+                        <p class="card-text"><small>Payment Confirmed</small></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3 shadow-sm">
+                    <div class="card-header bg-transparent border-0">Pending Payment</div>
+                    <div class="card-body">
+                        <h2 class="card-title fw-bold text-dark">0</h2>
+                        <p class="card-text text-dark"><small>Awaiting Payment</small></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3 shadow-sm">
+                    <div class="card-header bg-transparent border-0">Total Companies</div>
+                    <div class="card-body">
+                        <h2 class="card-title fw-bold">0</h2>
+                        <p class="card-text"><small>Active Partners</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

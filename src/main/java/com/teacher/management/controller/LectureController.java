@@ -1,0 +1,86 @@
+package com.teacher.management.controller;
+
+import com.teacher.management.entity.Lecture;
+import com.teacher.management.service.CompanyService;
+import com.teacher.management.service.CustomerService;
+import com.teacher.management.service.LectureService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/lectures")
+@RequiredArgsConstructor
+public class LectureController {
+
+    private final LectureService lectureService;
+    private final CompanyService companyService;
+    private final CustomerService customerService;
+
+    @GetMapping
+    public String list(Model model,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        model.addAttribute("lectures", lectureService.getAllLectures(pageable));
+        return "lecture/list";
+    }
+
+    @GetMapping("/new")
+    public String form(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+        model.addAttribute("lecture", new Lecture());
+        model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
+        model.addAttribute("customers", customerService.getAllCustomersForDropdown());
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "lecture/form :: formFragment";
+        }
+        return "lecture/form";
+    }
+
+    @PostMapping
+    public String save(Lecture lecture) {
+        lectureService.saveLecture(lecture);
+        return "redirect:/lectures";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+        model.addAttribute("lecture", lectureService.getLectureById(id));
+        model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
+        model.addAttribute("customers", customerService.getAllCustomersForDropdown());
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "lecture/form :: formFragment";
+        }
+        return "lecture/form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String update(@PathVariable Long id, Lecture lecture) {
+        Lecture existingLecture = lectureService.getLectureById(id);
+        existingLecture.setTitle(lecture.getTitle());
+        existingLecture.setCategory(lecture.getCategory());
+        existingLecture.setPrice(lecture.getPrice());
+        existingLecture.setLectureAt(lecture.getLectureAt());
+        existingLecture.setIsPaid(lecture.getIsPaid());
+        existingLecture.setStatus(lecture.getStatus());
+        existingLecture.setCompany(lecture.getCompany());
+        existingLecture.setCustomer(lecture.getCustomer());
+        existingLecture.setNotificationYn(lecture.getNotificationYn() != null ? lecture.getNotificationYn() : "N");
+
+        lectureService.saveLecture(existingLecture);
+        return "redirect:/lectures";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        lectureService.deleteLecture(id);
+        return "redirect:/lectures";
+    }
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div}, 'company')}">
+
+<body>
+    <div>
+        <h2 class="mb-4">Register Company</h2>
+
+        <div class="card shadow-sm" style="max-width: 600px;">
+            <div class="card-body">
+                <form th:action="${company.id == null} ? @{/companies} : @{/companies/{id}/edit(id=${company.id})}"
+                    th:object="${company}" method="post" th:fragment="formFragment">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Company Name *</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="registrationNumber" class="form-label">Registration Number</label>
+                            <input type="text" class="form-control" id="registrationNumber"
+                                th:field="*{registrationNumber}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="type" class="form-label">Type</label>
+                            <select class="form-select" id="type" th:field="*{type}">
+                                <option value="PRIVATE">Private Enterprise</option>
+                                <option value="PUBLIC">Public Institution</option>
+                                <option value="NGO">NGO</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" th:field="*{status}">
+                                <option value="ACTIVE">Active</option>
+                                <option value="INACTIVE">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" th:field="*{address}">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="contact" class="form-label">Contact Person</label>
+                            <input type="text" class="form-control" id="contact" th:field="*{contact}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="phone" th:field="*{phone}"
+                                placeholder="02-1234-5678">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary"
+                            th:text="${company.id == null ? 'Register Company' : 'Update Company'}">Save
+                            Company</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

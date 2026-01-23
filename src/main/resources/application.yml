@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: teacher-management
+  docker:
+    compose:
+      enabled: false
+
+  datasource:
+    url: jdbc:mysql://34.64.114.157:3306/mcompanyDB?verifyServerCertificate=false&useSSL=true&requireSSL=true&allowPublicKeyRetrieval=true
+    username: mcompany
+    password: Mcompany123!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        content_type: text/html
+        character_encoding: UTF-8
+
+  sql:
+    init:
+      mode: never
+
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+
+logging:
+  level:
+    root: INFO
+    com.teacher.management: DEBUG
+
+solapi:
+  api-key: NCS8SJGHTGM6FUUC
+  api-secret: NJJ75DAUNKVONMKT3MC7MEISD8BF7FUM
+  domain: https://api.coolsms.co.kr
+  from-number: 010-4134-7463

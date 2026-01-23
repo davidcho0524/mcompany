@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div}, 'customer')}">
+
+<body>
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Customer Management</h2>
+            <a href="javascript:void(0)" data-modal-url="/customers/new" data-modal-title="Register Customer"
+                class="btn btn-primary open-modal"><i class="bi bi-plus-lg"></i> Register Customer</a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Company</th>
+                            <th>Position</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="customer : ${customers.content}" th:id="'customer-row-' + ${customer.id}"
+                            th:data-id="${customer.id}">
+                            <td th:text="${customer.id}">1</td>
+                            <td th:text="${customer.name}">John Doe</td>
+                            <td th:text="${customer.company != null ? customer.company.name : '-'}">Samsung</td>
+                            <td th:text="${customer.position}">Manager</td>
+                            <td th:text="${customer.email}">john@example.com</td>
+                            <td th:text="${customer.phone}">010-1234-5678</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="javascript:void(0)" th:id="'edit-btn-' + ${customer.id}"
+                                        th:data-id="${customer.id}"
+                                        th:attr="data-modal-url=@{/customers/{id}/edit(id=${customer.id})}"
+                                        data-modal-title="Edit Customer"
+                                        class="btn btn-sm btn-outline-primary open-modal">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    <form th:action="@{/customers/{id}/delete(id=${customer.id})}" method="post"
+                                        onsubmit="return confirm('Are you sure you want to delete this customer?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${customers.totalElements == 0}">
+                            <td colspan="7" class="text-center py-4">No customers found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <nav th:if="${customers.totalPages > 0}" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${customers.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/customers(page=${customers.number - 1})}"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, customers.totalPages - 1)}"
+                            th:classappend="${customers.number == i} ? 'active'">
+                            <a class="page-link" th:href="@{/customers(page=${i})}" th:text="${i + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${customers.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/customers(page=${customers.number + 1})}"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

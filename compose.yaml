@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: 'mysql:8.0'
+    container_name: teacher-management-db
+    environment:
+      - 'MYSQL_DATABASE=teacher_db'
+      - 'MYSQL_PASSWORD=teacher_pass'
+      - 'MYSQL_ROOT_PASSWORD=teacher_root'
+      - 'MYSQL_USER=teacher_user'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
