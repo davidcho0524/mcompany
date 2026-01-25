@@ -36,7 +36,7 @@ public class LectureController {
     public String form(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
         model.addAttribute("lecture", new Lecture());
         model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
-        model.addAttribute("customers", customerService.getAllCustomersForDropdown());
+        model.addAttribute("customers", java.util.Collections.emptyList());
         if ("XMLHttpRequest".equals(requestedWith)) {
             return "lecture/form :: formFragment";
         }
@@ -52,9 +52,16 @@ public class LectureController {
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-        model.addAttribute("lecture", lectureService.getLectureById(id));
+        Lecture lecture = lectureService.getLectureById(id);
+        model.addAttribute("lecture", lecture);
         model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
-        model.addAttribute("customers", customerService.getAllCustomersForDropdown());
+
+        if (lecture.getCompany() != null) {
+            model.addAttribute("customers", customerService.getCustomersByCompanyId(lecture.getCompany().getId()));
+        } else {
+            model.addAttribute("customers", java.util.Collections.emptyList());
+        }
+
         if ("XMLHttpRequest".equals(requestedWith)) {
             return "lecture/form :: formFragment";
         }

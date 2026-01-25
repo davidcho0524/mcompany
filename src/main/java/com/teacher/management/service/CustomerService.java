@@ -26,6 +26,10 @@ public class CustomerService {
         return customerRepository.findAllByOrderByNameAsc();
     }
 
+    public List<DropdownDto> getCustomersByCompanyId(Long companyId) {
+        return customerRepository.findAllByCompanyIdOrderByNameAsc(companyId);
+    }
+
     public Customer getCustomerById(Long id) {
         return customerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));

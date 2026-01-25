@@ -43,7 +43,10 @@ public class SmsService {
         Message message = new Message();
         message.setFrom(fromNumber);
         message.setTo(to);
-        message.setText(text);
+
+        if (text != null && !text.isEmpty()) {
+            message.setText(text);
+        }
 
         if ("KAKAO".equalsIgnoreCase(type)) {
             // Check for Kakao options
@@ -59,6 +62,7 @@ public class SmsService {
 
         // Just use SDK 'sendOne'
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        System.out.println("Solapi Response: " + response); // Debug log
         return response.getMessageId();
     }
 }

@@ -1,17 +1,17 @@
 <form th:action="@{/notifications/templates/save}" method="post" th:object="${template}" class="needs-validation">
     <input type="hidden" th:field="*{id}" />
 
-    <div class="mb-3">
+    <div class="mb-2">
         <label for="name" class="form-label">Template Name</label>
         <input type="text" class="form-control" id="name" th:field="*{name}" required>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-2">
         <label class="form-label">Message Type</label>
         <div>
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="messageType" id="typeSms" value="SMS"
-                    th:field="*{messageType}" required>
+                    th:field="*{messageType}" checked required>
                 <label class="form-check-label" for="typeSms">SMS</label>
             </div>
             <div class="form-check form-check-inline">
@@ -22,15 +22,33 @@
         </div>
     </div>
 
-    <div class="mb-3">
-        <label for="content" class="form-label">Message Content</label>
-        <textarea class="form-control" id="content" rows="6" th:field="*{content}" required></textarea>
-        <div class="form-text">
-            Variables: <code>{customerName}</code>, <code>{lectureTitle}</code>, <code>{lectureDate}</code>
+    <div id="kakaoFields">
+        <div class="mb-2">
+            <label for="kakaoPfId" class="form-label">Kakao Channel ID (PfId)</label>
+            <input type="text" class="form-control" id="kakaoPfId" th:field="*{kakaoPfId}"
+                placeholder="Required for KakaoTalk">
+        </div>
+
+        <div class="mb-2">
+            <label for="kakaoTemplateId" class="form-label">Kakao Template ID</label>
+            <input type="text" class="form-control" id="kakaoTemplateId" th:field="*{kakaoTemplateId}"
+                placeholder="Required for KakaoTalk">
         </div>
     </div>
 
-    <div class="d-flex justify-content-end gap-2">
+    <div id="contentField">
+        <div class="mb-2">
+            <label for="content" class="form-label">Message Content</label>
+            <textarea class="form-control" id="content" style="height: 80px; resize: none;"
+                th:field="*{content}"></textarea>
+            <div class="form-text">
+                Variables: <code>{customerName}</code>, <code>{lectureTitle}</code>, <code>{lectureDate}</code>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 sticky-bottom bg-white py-3 border-top mt-2"
+        style="bottom: -1rem; margin-bottom: -1rem; margin-left: -1rem; margin-right: -1rem; padding-right: 1rem;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-primary">Save Template</button>
     </div>

@@ -100,6 +100,8 @@ public class NotificationService {
 
         // Replace placeholders associated with the lecture
         String content = template.getContent();
+        if (content == null)
+            content = "";
         content = content.replace("{title}", lecture.getTitle() != null ? lecture.getTitle() : "")
                 .replace("{date}", lecture.getLectureAt() != null
                         ? lecture.getLectureAt()
@@ -118,6 +120,8 @@ public class NotificationService {
             logEntry.setNotificationType("MANUAL"); // Manual Trigger
             logEntry.setStatus("SUCCESS");
             logEntry.setMessageId(messageId);
+            logEntry.setMessageType(template.getMessageType());
+            logEntry.setMemberId(lecture.getCustomer().getId());
             logEntry.setSentAt(java.time.LocalDateTime.now());
             logRepository.save(logEntry);
 
@@ -128,9 +132,16 @@ public class NotificationService {
             logEntry.setNotificationType("MANUAL");
             logEntry.setStatus("FAIL");
             logEntry.setFailReason(e.getMessage());
+            logEntry.setMessageType(template.getMessageType());
+            logEntry.setMemberId(lecture.getCustomer().getId());
             logEntry.setSentAt(java.time.LocalDateTime.now());
             logRepository.save(logEntry);
             throw new RuntimeException("Failed to send notification: " + e.getMessage());
         }
+    }
+    // --- Log Methods ---
+
+    public Page<com.teacher.management.entity.NotificationLog> getNotificationLogs(Pageable pageable) {
+        return logRepository.findAll(pageable);
     }
 }

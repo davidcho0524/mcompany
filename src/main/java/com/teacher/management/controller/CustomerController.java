@@ -47,6 +47,12 @@ public class CustomerController {
         return "redirect:/customers";
     }
 
+    @GetMapping("/by-company/{companyId}")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.List<com.teacher.management.dto.DropdownDto> getCustomersByCompany(@PathVariable Long companyId) {
+        return customerService.getCustomersByCompanyId(companyId);
+    }
+
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {

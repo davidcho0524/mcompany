@@ -17,6 +17,8 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Type</th>
+                            <th>PfID</th>
+                            <th>Tmpl ID</th>
                             <th>Content</th>
                             <th>Action</th>
                         </tr>
@@ -30,6 +32,8 @@
                                     th:classappend="${template.messageType == 'SMS' ? 'bg-secondary' : 'bg-warning text-dark'}"
                                     th:text="${template.messageType}">SMS</span>
                             </td>
+                            <td th:text="${template.kakaoPfId}"></td>
+                            <td th:text="${template.kakaoTemplateId}"></td>
                             <td th:text="${#strings.abbreviate(template.content, 50)}">Hello...</td>
                             <td>
                                 <div class="d-flex gap-2">
@@ -49,7 +53,7 @@
                             </td>
                         </tr>
                         <tr th:if="${templates.totalElements == 0}">
-                            <td colspan="5" class="text-center py-4">No templates found.</td>
+                            <td colspan="7" class="text-center py-4">No templates found.</td>
                         </tr>
                     </tbody>
                 </table>

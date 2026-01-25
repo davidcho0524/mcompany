@@ -35,6 +35,12 @@ public class NotificationLog {
 
     private String failReason;
 
+    @Column(name = "message_type")
+    private String messageType; // SMS, KAKAO
+
+    @Column(name = "member_id")
+    private Long memberId;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime sentAt;

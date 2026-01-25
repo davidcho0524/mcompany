@@ -38,5 +38,5 @@ logging:
 solapi:
   api-key: NCS8SJGHTGM6FUUC
   api-secret: NJJ75DAUNKVONMKT3MC7MEISD8BF7FUM
-  domain: https://api.coolsms.co.kr
+  domain: https://api.solapi.com
   from-number: 010-4134-7463

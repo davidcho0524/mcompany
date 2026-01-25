@@ -15,14 +15,14 @@
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
-                            <th>Title</th>
-                            <th>Company</th>
-                            <th>Instructor/POC</th>
-                            <th>Date</th>
-                            <th>Price</th>
-                            <th>Payment</th>
-                            <th>Status</th>
-                            <th>Notification</th>
+                            <th>제목</th>
+                            <th>회사명</th>
+                            <th>담당자명</th>
+                            <th>강의일자</th>
+                            <th>강의금액</th>
+                            <th>지불여부</th>
+                            <th>상태</th>
+                            <th>알림</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -102,6 +102,29 @@
                 </nav>
             </div>
         </div>
+
+        <script>
+            function fetchCustomersByCompany(companyId) {
+                const customerSelect = document.getElementById('customer');
+                if (!companyId) {
+                    customerSelect.innerHTML = '<option value="">Select Instructor/POC</option>';
+                    return;
+                }
+
+                fetch('/customers/by-company/' + companyId)
+                    .then(response => response.json())
+                    .then(data => {
+                        customerSelect.innerHTML = '<option value="">Select Instructor/POC</option>';
+                        data.forEach(customer => {
+                            const option = document.createElement('option');
+                            option.value = customer.id;
+                            option.text = customer.name;
+                            customerSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching customers:', error));
+            }
+        </script>
     </div>
 </body>
 

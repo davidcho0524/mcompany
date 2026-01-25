@@ -43,6 +43,9 @@ public class NotificationController {
 
     @PostMapping("/templates/save")
     public String saveTemplate(@ModelAttribute NotificationTemplate template) {
+        if (template.getContent() == null) {
+            template.setContent("");
+        }
         notificationService.saveTemplate(template);
         return "redirect:/notifications/templates";
     }
@@ -115,5 +118,14 @@ public class NotificationController {
             return org.springframework.http.ResponseEntity.status(500)
                     .body(e.getMessage());
         }
+    }
+    // --- Log Management ---
+
+    @GetMapping("/logs")
+    public String listLogs(Model model,
+            @PageableDefault(size = 20, sort = "sentAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<com.teacher.management.entity.NotificationLog> logs = notificationService.getNotificationLogs(pageable);
+        model.addAttribute("logs", logs);
+        return "notifications/log_list";
     }
 }

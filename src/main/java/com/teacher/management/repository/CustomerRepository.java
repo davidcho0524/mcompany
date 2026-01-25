@@ -11,6 +11,8 @@ import java.util.List;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<DropdownDto> findAllByOrderByNameAsc();
 
+    List<DropdownDto> findAllByCompanyIdOrderByNameAsc(Long companyId);
+
     @Override
     @EntityGraph(attributePaths = { "company" })
     org.springframework.data.domain.Page<Customer> findAll(org.springframework.data.domain.Pageable pageable);

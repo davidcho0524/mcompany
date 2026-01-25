@@ -2,6 +2,9 @@ package com.teacher.management.scheduler;
 
 import com.teacher.management.entity.Lecture;
 import com.teacher.management.entity.NotificationLog;
+import com.teacher.management.entity.LectureNotificationConfig;
+import com.teacher.management.entity.NotificationTemplate;
+import com.teacher.management.repository.LectureNotificationConfigRepository;
 import com.teacher.management.repository.LectureRepository;
 import com.teacher.management.repository.NotificationLogRepository;
 import com.teacher.management.service.SmsService;
@@ -21,11 +24,13 @@ public class NotificationScheduler {
 
     private final LectureRepository lectureRepository;
     private final NotificationLogRepository notificationLogRepository;
+    private final LectureNotificationConfigRepository configRepository;
     private final SmsService smsService;
 
     @Scheduled(cron = "0 */10 * * * *") // Every 10 minutes
     public void scheduleNotifications() {
         LocalDateTime now = LocalDateTime.now();
+        log.info("Notification scheduler running at {}", now);
 
         // 1 Day Before
         processNotifications(now, 24, "1DAY");
@@ -49,7 +54,7 @@ public class NotificationScheduler {
 
         for (Lecture lecture : lectures) {
             try {
-                if (!notificationLogRepository.existsByLectureAndNotificationType(lecture, type)) {
+                if (!notificationLogRepository.existsByLectureAndNotificationTypeAndStatus(lecture, type, "SUCCESS")) {
                     sendNotification(lecture, type);
                 }
             } catch (Exception e) {
@@ -65,42 +70,69 @@ public class NotificationScheduler {
             return;
         }
 
+        // Find configuration for this lecture and type
+        LectureNotificationConfig config = configRepository.findByLectureAndTimingType(lecture, type)
+                .orElse(null);
+
+        if (config == null) {
+            log.info("No notification config found for lecture {} type {}", lecture.getId(), type);
+            return;
+        }
+
+        NotificationTemplate template = config.getTemplate();
+        if (template == null) {
+            log.warn("Config exists but no template for lecture {} type {}", lecture.getId(), type);
+            return;
+        }
+
         String formattedPhone = customerPhone.replaceAll("[^0-9]", "");
-        String message = buildMessage(lecture, type);
+
+        // Build message content from template
+        String content = buildMessageFromTemplate(lecture, template);
 
         try {
-            String messageId = smsService.sendSms(formattedPhone, message);
+            String messageId = smsService.sendMessage(formattedPhone, content, template.getMessageType(),
+                    template.getKakaoPfId(), template.getKakaoTemplateId());
 
             NotificationLog logEntry = new NotificationLog();
             logEntry.setLecture(lecture);
             logEntry.setNotificationType(type);
             logEntry.setStatus("SUCCESS");
             logEntry.setMessageId(messageId);
+            logEntry.setMessageType(template.getMessageType());
+            logEntry.setMemberId(lecture.getCustomer().getId());
             logEntry.setSentAt(LocalDateTime.now());
             notificationLogRepository.save(logEntry);
 
-            log.info("Sent {} notification to {} for lecture {}", type, formattedPhone, lecture.getId());
+            log.info("Sent {} notification ({}) to {} for lecture {}", type, template.getMessageType(), formattedPhone,
+                    lecture.getId());
         } catch (Exception e) {
-            log.error("Failed to send sms", e);
+            log.error("Failed to send notification", e);
             NotificationLog logEntry = new NotificationLog();
             logEntry.setLecture(lecture);
             logEntry.setNotificationType(type);
             logEntry.setStatus("FAIL");
             logEntry.setFailReason(e.getMessage());
+            logEntry.setMessageType(template.getMessageType());
+            logEntry.setMemberId(lecture.getCustomer().getId());
             logEntry.setSentAt(LocalDateTime.now());
             notificationLogRepository.save(logEntry);
         }
     }
 
-    private String buildMessage(Lecture lecture, String type) {
-        String timeDesc = type.equals("1DAY") ? "1일 전" : "1시간 전";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일 H시 m분");
-        String formattedDate = lecture.getLectureAt().format(formatter);
+    private String buildMessageFromTemplate(Lecture lecture, NotificationTemplate template) {
+        String content = template.getContent();
+        if (content == null)
+            content = "";
 
-        return String.format("[강의 알림] %s\n(%s)\n\n안녕하세요. 신청하신 강의가 시작 %s입니다.\n일시: %s\n",
-                lecture.getTitle(),
-                timeDesc,
-                timeDesc,
-                formattedDate);
+        // Standard replacements
+        content = content.replace("{title}", lecture.getTitle() != null ? lecture.getTitle() : "")
+                .replace("{date}", lecture.getLectureAt() != null
+                        ? lecture.getLectureAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                        : "")
+                .replace("{customer}", lecture.getCustomer().getName() != null ? lecture.getCustomer().getName() : "")
+                .replace("{company}", lecture.getCompany() != null ? lecture.getCompany().getName() : "");
+
+        return content;
     }
 }

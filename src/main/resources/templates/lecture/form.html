@@ -12,11 +12,11 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="title" class="form-label">Lecture Title *</label>
+                            <label for="title" class="form-label">제목 *</label>
                             <input type="text" class="form-control" id="title" th:field="*{title}" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="category" class="form-label">Category</label>
+                            <label for="category" class="form-label">분류</label>
                             <select class="form-select" id="category" th:field="*{category}">
                                 <option value="IT">IT</option>
                                 <option value="LANGUAGE">Language</option>
@@ -28,8 +28,9 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="company" class="form-label">Company</label>
-                            <select class="form-select" id="company" name="company">
+                            <label for="company" class="form-label">회사명</label>
+                            <select class="form-select" id="company" name="company"
+                                onchange="fetchCustomersByCompany(this.value)">
                                 <option value="">Select Company</option>
                                 <option th:each="comp : ${companies}" th:value="${comp.id}" th:text="${comp.name}"
                                     th:selected="${lecture.company != null && lecture.company.id == comp.id}">
@@ -37,7 +38,7 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="customer" class="form-label">Instructor/POC</label>
+                            <label for="customer" class="form-label">강사/POC</label>
                             <select class="form-select" id="customer" name="customer">
                                 <option value="">Select Instructor/POC</option>
                                 <option th:each="cust : ${customers}" th:value="${cust.id}" th:text="${cust.name}"
@@ -49,36 +50,36 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="price" class="form-label">Price</label>
+                            <label for="price" class="form-label">강의금액</label>
                             <input type="number" class="form-control" id="price" th:field="*{price}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="lectureAt" class="form-label">Date & Time</label>
+                            <label for="lectureAt" class="form-label">강의일자</label>
                             <input type="datetime-local" class="form-control" id="lectureAt" th:field="*{lectureAt}">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="status" class="form-label">Status</label>
+                            <label for="status" class="form-label">상태</label>
                             <select class="form-select" id="status" th:field="*{status}">
-                                <option value="SCHEDULED">Scheduled</option>
-                                <option value="COMPLETED">Completed</option>
-                                <option value="CANCELLED">Cancelled</option>
+                                <option value="SCHEDULED">예정</option>
+                                <option value="COMPLETED">완료</option>
+                                <option value="CANCELLED">취소</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="isPaid" class="form-label">Payment Status</label>
+                            <label for="isPaid" class="form-label">지불여부</label>
                             <select class="form-select" id="isPaid" th:field="*{isPaid}">
-                                <option value="false">Pending</option>
-                                <option value="true">Paid</option>
+                                <option value="false">미지불</option>
+                                <option value="true">지불</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="notificationYn" class="form-label">Send Notification</label>
+                            <label for="notificationYn" class="form-label">알림여부</label>
                             <select class="form-select" id="notificationYn" th:field="*{notificationYn}">
                                 <option value="N">No</option>
                                 <option value="Y">Yes</option>

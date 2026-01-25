@@ -92,6 +92,9 @@
                 <li th:class="${activeMenu == 'notification-template'} ? 'active'">
                     <a href="/notifications/templates"><i class="bi bi-chat-text me-2"></i> Templates</a>
                 </li>
+                <li th:class="${activeMenu == 'notification-log'} ? 'active'">
+                    <a href="/notifications/logs"><i class="bi bi-clock-history me-2"></i> History</a>
+                </li>
 
                 <li class="mt-3 text-uppercase small text-muted px-3">System</li>
                 <li>
@@ -125,7 +128,7 @@
 
     <!-- Generic Modal -->
     <div class="modal fade" id="commonModal" tabindex="-1" aria-labelledby="commonModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="commonModalLabel">Title</h5>
@@ -216,6 +219,7 @@
                         .then(html => {
                             modalBody.innerHTML = html;
                             bindFormSubmit();
+                            initModalScripts();
                         })
                         .catch(err => {
                             console.error('Error loading modal content:', err);
@@ -223,6 +227,35 @@
                         });
                 }
             });
+
+            function initModalScripts() {
+                const kakaoFields = document.getElementById('kakaoFields');
+                const contentField = document.getElementById('contentField');
+                if (kakaoFields && contentField) {
+                    const toggle = () => {
+                        const isKakao = document.getElementById('typeKakao').checked;
+                        if (isKakao) {
+                            kakaoFields.style.display = 'block';
+                            kakaoFields.querySelectorAll('input').forEach(i => i.disabled = false);
+                            contentField.style.display = 'none';
+                            contentField.querySelectorAll('textarea').forEach(t => t.disabled = true);
+                        } else {
+                            kakaoFields.style.display = 'none';
+                            kakaoFields.querySelectorAll('input').forEach(i => i.disabled = true);
+                            contentField.style.display = 'block';
+                            contentField.querySelectorAll('textarea').forEach(t => t.disabled = false);
+                        }
+                    };
+                    const radios = document.querySelectorAll('input[name="messageType"]');
+                    radios.forEach(r => r.addEventListener('change', toggle));
+
+                    // Force default to SMS if nothing selected (though backend usually handles default)
+                    if (!document.querySelector('input[name="messageType"]:checked')) {
+                        document.getElementById('typeSms').checked = true;
+                    }
+                    toggle(); // Initial run
+                }
+            }
 
             function bindFormSubmit() {
                 const form = modalBody.querySelector('form');
@@ -247,6 +280,7 @@
                                         // If we got text back, it's likely validation errors (fragment)
                                         modalBody.innerHTML = html;
                                         bindFormSubmit(); // Re-bind for the new form HTML
+                                        initModalScripts(); // Re-bind for validation error form
                                     });
                                 }
                             })
