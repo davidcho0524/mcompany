@@ -92,6 +92,10 @@ public class NotificationService {
         NotificationTemplate template = templateRepository.findById(templateId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid template ID"));
 
+        if (lecture.getCustomer() == null) {
+            throw new IllegalStateException("No customer assigned to this lecture");
+        }
+
         String customerPhone = lecture.getCustomer().getPhone();
         if (customerPhone == null || customerPhone.isEmpty()) {
             throw new IllegalStateException("Customer phone number is missing");
@@ -108,7 +112,14 @@ public class NotificationService {
                                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                         : "")
                 .replace("{customer}", lecture.getCustomer().getName() != null ? lecture.getCustomer().getName() : "")
-                .replace("{company}", lecture.getCompany() != null ? lecture.getCompany().getName() : "");
+                .replace("{company}", lecture.getCompany() != null ? lecture.getCompany().getName() : "")
+                .replace("{price}",
+                        lecture.getPrice() != null ? java.text.NumberFormat.getInstance().format(lecture.getPrice())
+                                : "0")
+                .replace("{totalHours}",
+                        lecture.getTotalHours() != null ? String.valueOf(lecture.getTotalHours()) : "0")
+                .replace("{category}", lecture.getCategory() != null ? lecture.getCategory().getDescription() : "")
+                .replace("{status}", lecture.getStatus() != null ? lecture.getStatus() : "");
 
         try {
             String messageId = smsService.sendMessage(formattedPhone, content, template.getMessageType(),

@@ -36,15 +36,19 @@ public class Lecture {
     @Column(nullable = false)
     private String title;
 
-    private String category; // Lecture Category
+    @Enumerated(EnumType.STRING)
+    private LectureCategory category; // Lecture Category
 
     private BigDecimal price;
+
+    @Column(name = "total_hours")
+    private Double totalHours;
 
     @Column(name = "is_paid")
     private Boolean isPaid = false;
 
     @Column(name = "lecture_at")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime lectureAt; // Date and Time of Lecture
 
     private String status; // SCHEDULED, COMPLETED, CANCELLED

@@ -36,8 +36,12 @@ public class NotificationController {
     }
 
     @GetMapping("/templates/new")
-    public String newTemplateForm(Model model) {
+    public String newTemplateForm(Model model,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
         model.addAttribute("template", new NotificationTemplate());
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "notifications/template_form :: formFragment";
+        }
         return "notifications/template_form";
     }
 
@@ -51,8 +55,12 @@ public class NotificationController {
     }
 
     @GetMapping("/templates/{id}")
-    public String editTemplateForm(@PathVariable Long id, Model model) {
+    public String editTemplateForm(@PathVariable Long id, Model model,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
         model.addAttribute("template", notificationService.getTemplate(id));
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "notifications/template_form :: formFragment";
+        }
         return "notifications/template_form";
     }
 

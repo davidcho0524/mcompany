@@ -30,6 +30,16 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+server:
+  tomcat:
+    max-http-form-post-size: 50MB
+    max-swallow-size: 50MB
+
 logging:
   level:
     root: INFO

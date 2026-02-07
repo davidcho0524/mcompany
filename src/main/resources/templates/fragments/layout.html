@@ -231,6 +231,8 @@
             function initModalScripts() {
                 const kakaoFields = document.getElementById('kakaoFields');
                 const contentField = document.getElementById('contentField');
+
+                // Toggle Kakao/SMS fields
                 if (kakaoFields && contentField) {
                     const toggle = () => {
                         const isKakao = document.getElementById('typeKakao').checked;
@@ -249,11 +251,74 @@
                     const radios = document.querySelectorAll('input[name="messageType"]');
                     radios.forEach(r => r.addEventListener('change', toggle));
 
-                    // Force default to SMS if nothing selected (though backend usually handles default)
+                    // Force default to SMS if nothing selected
                     if (!document.querySelector('input[name="messageType"]:checked')) {
                         document.getElementById('typeSms').checked = true;
                     }
                     toggle(); // Initial run
+                }
+
+                // Initialize Autocomplete
+                const textarea = document.getElementById('templateContent');
+                const suggestions = document.getElementById('variableSuggestions');
+
+                if (textarea && suggestions) {
+                    console.log('Autocomplete initialized for textarea:', textarea);
+
+                    // Input handler
+                    textarea.addEventListener('input', function (e) {
+                        const cursorPosition = this.selectionStart;
+                        const text = this.value;
+                        const textBeforeCursor = text.substring(0, cursorPosition);
+
+                        console.log('Input detected. Ends with //?', textBeforeCursor.endsWith('//'));
+
+                        if (textBeforeCursor.endsWith('//')) {
+                            suggestions.style.display = 'block';
+                            // Calculate position relative to the textarea
+                            // We use offsetTop/Left which are relative to the closest positioned ancestor 
+                            // (which is the div.position-relative wrapper)
+                            suggestions.style.top = (this.offsetTop + 50) + 'px';
+                            suggestions.style.left = '15px';
+                            suggestions.style.zIndex = '2000'; // High z-index to be sure
+                        } else {
+                            suggestions.style.display = 'none';
+                        }
+                    });
+
+                    // Item click handler
+                    suggestions.querySelectorAll('.dropdown-item').forEach(item => {
+                        item.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const value = this.getAttribute('data-value');
+                            console.log('Suggestion clicked:', value);
+
+                            const cursorPosition = textarea.selectionStart;
+                            const text = textarea.value;
+                            const textBeforeCursor = text.substring(0, cursorPosition);
+                            const textAfterCursor = text.substring(cursorPosition);
+
+                            if (textBeforeCursor.endsWith('//')) {
+                                const newText = textBeforeCursor.substring(0, textBeforeCursor.length - 2) + value + textAfterCursor;
+                                textarea.value = newText;
+
+                                textarea.focus();
+                                const newCursorPos = cursorPosition - 2 + value.length;
+                                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                            }
+
+                            suggestions.style.display = 'none';
+                        });
+                    });
+
+                    // Close on click outside
+                    document.addEventListener('click', function (e) {
+                        if (e.target !== textarea && !suggestions.contains(e.target)) {
+                            suggestions.style.display = 'none';
+                        }
+                    });
+                } else {
+                    console.error('Autocomplete elements not found!', { textarea, suggestions });
                 }
             }
 
@@ -265,9 +330,15 @@
                         const formData = new FormData(form);
                         const action = form.getAttribute('action');
 
+                        let body = formData;
+                        // Use URLSearchParams for non-multipart forms to avoid 413 FileCountLimitExceeded
+                        if (form.enctype !== 'multipart/form-data') {
+                            body = new URLSearchParams(formData);
+                        }
+
                         fetch(action, {
                             method: form.method,
-                            body: formData,
+                            body: body,
                             headers: { 'X-Requested-With': 'XMLHttpRequest' }
                         })
                             .then(response => {

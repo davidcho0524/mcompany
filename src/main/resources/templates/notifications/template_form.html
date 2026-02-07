@@ -1,4 +1,5 @@
-<form th:action="@{/notifications/templates/save}" method="post" th:object="${template}" class="needs-validation">
+<form th:action="@{/notifications/templates/save}" method="post" th:object="${template}" class="needs-validation"
+    th:fragment="formFragment">
     <input type="hidden" th:field="*{id}" />
 
     <div class="mb-2">
@@ -37,14 +38,35 @@
     </div>
 
     <div id="contentField">
-        <div class="mb-2">
-            <label for="content" class="form-label">Message Content</label>
-            <textarea class="form-control" id="content" style="height: 80px; resize: none;"
+        <div class="mb-2 position-relative">
+            <label for="templateContent" class="form-label">Message Content</label>
+            <textarea class="form-control" id="templateContent" style="height: 120px; resize: none;"
                 th:field="*{content}"></textarea>
+
+            <!-- Autocomplete Dropdown -->
+            <ul id="variableSuggestions" class="dropdown-menu shadow"
+                style="display: none; position: absolute; max-height: 200px; overflow-y: auto;">
+                <li><a class="dropdown-item" href="#" data-value="{customer}">Customer Name ({customer})</a></li>
+                <li><a class="dropdown-item" href="#" data-value="{title}">Lecture Title ({title})</a></li>
+                <li><a class="dropdown-item" href="#" data-value="{date}">Lecture Date ({date})</a></li>
+                <li><a class="dropdown-item" href="#" data-value="{company}">Company Name ({company})</a></li>
+                <li><a class="dropdown-item" href="#" data-value="{price}">Price ({price})</a></li>
+                <li><a class="dropdown-item" href="#" data-value="{totalHours}">Total Hours ({totalHours})</a></li>
+                <li><a class="dropdown-item" href="#" data-value="{category}">Category ({category})</a></li>
+                <li><a class="dropdown-item" href="#" data-value="{status}">Status ({status})</a></li>
+            </ul>
+
+            <div class="form-text mt-2">
+                <i class="bi bi-info-circle"></i> Tip: Type <code>//</code> to select a variable.
+            </div>
             <div class="form-text">
-                Variables: <code>{customerName}</code>, <code>{lectureTitle}</code>, <code>{lectureDate}</code>
+                Variables: <code>{customer}</code>, <code>{title}</code>, <code>{date}</code>, <code>{company}</code>,
+                <code>{price}</code>, <code>{totalHours}</code>, <code>{category}</code>, <code>{status}</code>
             </div>
         </div>
+    </div>
+
+
     </div>
 
     <div class="d-flex justify-content-end gap-2 sticky-bottom bg-white py-3 border-top mt-2"

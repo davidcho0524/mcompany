@@ -35,6 +35,7 @@ public class LectureController {
     @GetMapping("/new")
     public String form(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
         model.addAttribute("lecture", new Lecture());
+        model.addAttribute("categories", com.teacher.management.entity.LectureCategory.values());
         model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
         model.addAttribute("customers", java.util.Collections.emptyList());
         if ("XMLHttpRequest".equals(requestedWith)) {
@@ -54,6 +55,7 @@ public class LectureController {
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
         Lecture lecture = lectureService.getLectureById(id);
         model.addAttribute("lecture", lecture);
+        model.addAttribute("categories", com.teacher.management.entity.LectureCategory.values());
         model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
 
         if (lecture.getCompany() != null) {
@@ -74,6 +76,7 @@ public class LectureController {
         existingLecture.setTitle(lecture.getTitle());
         existingLecture.setCategory(lecture.getCategory());
         existingLecture.setPrice(lecture.getPrice());
+        existingLecture.setTotalHours(lecture.getTotalHours());
         existingLecture.setLectureAt(lecture.getLectureAt());
         existingLecture.setIsPaid(lecture.getIsPaid());
         existingLecture.setStatus(lecture.getStatus());
