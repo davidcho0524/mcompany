@@ -18,4 +18,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths = { "customer", "company" })
     List<Lecture> findByNotificationYnAndLectureAtBetween(String notificationYn, LocalDateTime start,
             LocalDateTime end);
+
+    long countByStatus(String status);
 }

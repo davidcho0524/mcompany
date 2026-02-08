@@ -3,7 +3,7 @@
 
 <body>
     <div>
-        <h2 class="mb-4">Register Customer</h2>
+        <h2 class="mb-4">고객등록</h2>
 
         <div class="card shadow-sm" style="max-width: 600px;">
             <div class="card-body">
@@ -12,19 +12,38 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="name" class="form-label">이름 *</label>
+                            <label for="name" class="form-label">고객 이름 *</label>
                             <input type="text" class="form-control" id="name" th:field="*{name}" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="company" class="form-label">회사명</label>
-                            <select class="form-select" id="company" name="company">
-                                <option value="">Select Company</option>
-                                <option th:each="comp : ${companies}" th:value="${comp.id}" th:text="${comp.name}"
-                                    th:selected="${customer.company != null && customer.company.id == comp.id}">
-                                    Samsung</option>
+                            <label for="customerStatus" class="form-label">고객 상태</label>
+                            <select class="form-select" id="customerStatus" th:field="*{status}">
+                                <option value="">Select Status</option>
+                                <option th:each="status : ${T(com.teacher.management.entity.CustomerStatus).values()}"
+                                    th:value="${status}" th:text="${status.description}">Status</option>
                             </select>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="companyName" class="form-label">회사 이름 *</label>
+                            <input type="text" class="form-control" id="companyName" th:field="*{company.name}" required
+                                placeholder="Enter company name">
+                            <div class="form-text">If company exists, it will be linked. If not, a new company will be
+                                created.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="companyType" class="form-label">회사 종류</label>
+                            <select class="form-select" id="companyType" th:field="*{company.type}">
+                                <option value="">Select Type</option>
+                                <option th:each="type : ${T(com.teacher.management.entity.CompanyType).values()}"
+                                    th:value="${type}" th:text="${type.description}">Type</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-3 mb-3 border-bottom pb-2">고객 상세 정보</h5>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -32,7 +51,7 @@
                             <input type="text" class="form-control" id="position" th:field="*{position}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="birthDate" class="form-label">생년월일</label>
+                            <label for="birthDate" class="form-label">담당자생년월일</label>
                             <input type="date" class="form-control" id="birthDate" name="birthDate"
                                 th:value="${customer.birthDate}">
                         </div>

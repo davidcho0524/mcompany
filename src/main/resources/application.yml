@@ -1,6 +1,8 @@
 spring:
   application:
     name: teacher-management
+  jackson:
+    time-zone: Asia/Seoul
   docker:
     compose:
       enabled: false
@@ -27,7 +29,7 @@ spring:
 
   thymeleaf:
     cache: false
-    prefix: classpath:/templates/
+    prefix: file:src/main/resources/templates/
     suffix: .html
 
   servlet:

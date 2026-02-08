@@ -15,29 +15,30 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // Static resources
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll())
-                .logout(logout -> logout
-                        .permitAll());
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http
+                                .authorizeHttpRequests(authorize -> authorize
+                                                .requestMatchers("/css/**", "/js/**", "/images/**")
+                                                .permitAll() // Static resources
+                                                .anyRequest().authenticated())
+                                .formLogin(form -> form
+                                                .loginPage("/login")
+                                                .defaultSuccessUrl("/", true)
+                                                .permitAll())
+                                .logout(logout -> logout
+                                                .permitAll());
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("1234")
-                .roles("ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
+        @Bean
+        public UserDetailsService userDetailsService() {
+                UserDetails user = User.withDefaultPasswordEncoder()
+                                .username("admin")
+                                .password("1234")
+                                .roles("ADMIN")
+                                .build();
+                return new InMemoryUserDetailsManager(user);
+        }
 }

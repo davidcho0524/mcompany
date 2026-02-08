@@ -7,43 +7,64 @@
         <p class="mb-4">Welcome back to the Teacher Management System.</p>
 
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card text-white bg-primary mb-3 shadow-sm">
-                    <div class="card-header bg-transparent border-0">Total Lectures</div>
+                    <div class="card-header bg-transparent border-0">강의 진행중인 건수</div>
                     <div class="card-body">
-                        <h2 class="card-title fw-bold">0</h2>
-                        <p class="card-text"><small>Scheduled & Completed</small></p>
+                        <h2 class="card-title fw-bold" th:text="${ongoingLecturesCount}">0</h2>
+                        <p class="card-text"><small>Scheduled Lectures</small></p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card text-white bg-success mb-3 shadow-sm">
-                    <div class="card-header bg-transparent border-0">Paid Lectures</div>
+                    <div class="card-header bg-transparent border-0">전체 강의 건수</div>
                     <div class="card-body">
-                        <h2 class="card-title fw-bold">0</h2>
-                        <p class="card-text"><small>Payment Confirmed</small></p>
+                        <h2 class="card-title fw-bold" th:text="${totalLecturesCount}">0</h2>
+                        <p class="card-text"><small>Total Lectures</small></p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card text-white bg-warning mb-3 shadow-sm">
-                    <div class="card-header bg-transparent border-0">Pending Payment</div>
+                    <div class="card-header bg-transparent border-0">고객 건수</div>
                     <div class="card-body">
-                        <h2 class="card-title fw-bold text-dark">0</h2>
-                        <p class="card-text text-dark"><small>Awaiting Payment</small></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info mb-3 shadow-sm">
-                    <div class="card-header bg-transparent border-0">Total Companies</div>
-                    <div class="card-body">
-                        <h2 class="card-title fw-bold">0</h2>
-                        <p class="card-text"><small>Active Partners</small></p>
+                        <h2 class="card-title fw-bold text-dark" th:text="${totalCustomersCount}">0</h2>
+                        <p class="card-text text-dark"><small>Total Customers</small></p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Calendar Section -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <div id='calendar'></div>
+            </div>
+        </div>
+
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    height: '75vh', // Adjust height to fit screen better
+                    displayEventTime: false,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    events: '/api/calendar-events',
+                    eventClick: function (info) {
+                        // Optional: Show modal or details on click
+                        // alert('Lecture: ' + info.event.title);
+                    }
+                });
+                calendar.render();
+            });
+        </script>
     </div>
 </body>
 

@@ -93,4 +93,30 @@ public class LectureController {
         lectureService.deleteLecture(id);
         return "redirect:/lectures";
     }
+
+    @GetMapping("/{id}/feedback")
+    public String getFeedbackForm(@PathVariable Long id, Model model) {
+        Lecture lecture = lectureService.getLectureById(id);
+        model.addAttribute("lecture", lecture);
+        return "lecture/feedback_modal :: feedbackFormFragment";
+    }
+
+    @PostMapping("/{id}/feedback")
+    public String saveFeedback(@PathVariable Long id, Lecture lecture) {
+        Lecture existingLecture = lectureService.getLectureById(id);
+        existingLecture.setLectureMaterials(lecture.getLectureMaterials());
+        existingLecture.setDownloadLink(lecture.getDownloadLink());
+        existingLecture.setCustomerEvaluation(lecture.getCustomerEvaluation());
+        existingLecture.setSelfReviewContent(lecture.getSelfReviewContent());
+        existingLecture.setSelfReviewSpeed(lecture.getSelfReviewSpeed());
+        existingLecture.setSelfReviewDelivery(lecture.getSelfReviewDelivery());
+        existingLecture.setMentorFeedback(lecture.getMentorFeedback());
+        existingLecture.setImprovements(lecture.getImprovements());
+        existingLecture.setLinkedinPost(lecture.getLinkedinPost());
+        existingLecture.setNaverBlogPost(lecture.getNaverBlogPost());
+        existingLecture.setWordpressPost(lecture.getWordpressPost());
+
+        lectureService.saveLecture(existingLecture);
+        return "redirect:/lectures";
+    }
 }

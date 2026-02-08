@@ -26,7 +26,8 @@ public class Company {
     private String name;
 
     @Column(name = "company_type")
-    private String type; // PUBLIC, PRIVATE, NGO etc.
+    @Enumerated(EnumType.STRING)
+    private CompanyType type; // LARGE, MEDIUM, SMALL
 
     @Column(name = "registration_number", unique = true)
     private String registrationNumber;

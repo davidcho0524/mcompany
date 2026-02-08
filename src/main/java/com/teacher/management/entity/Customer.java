@@ -38,6 +38,9 @@ public class Customer {
 
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    private CustomerStatus status;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;

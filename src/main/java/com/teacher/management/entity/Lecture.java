@@ -56,6 +56,40 @@ public class Lecture {
     @Column(name = "notification_yn", length = 1)
     private String notificationYn = "N";
 
+    // Feedback Fields
+    @Column(columnDefinition = "TEXT")
+    private String lectureMaterials; // 강의자료
+
+    @Column(columnDefinition = "TEXT")
+    private String downloadLink; // 다운로드링크
+
+    @Column(columnDefinition = "TEXT")
+    private String customerEvaluation; // 고객 대상의 강의평가
+
+    @Column(columnDefinition = "TEXT")
+    private String selfReviewContent; // 자가리뷰 (콘텐츠)
+
+    @Column(columnDefinition = "TEXT")
+    private String selfReviewSpeed; // 자가리뷰 (속도)
+
+    @Column(columnDefinition = "TEXT")
+    private String selfReviewDelivery; // 자가리뷰 (음,어 등의 부사사용)
+
+    @Column(columnDefinition = "TEXT")
+    private String mentorFeedback; // 멘토피드백
+
+    @Column(columnDefinition = "TEXT")
+    private String improvements; // 개선사항
+
+    @Column(columnDefinition = "TEXT")
+    private String linkedinPost; // 링크드인 작성
+
+    @Column(columnDefinition = "TEXT")
+    private String naverBlogPost; // 네이버 작성
+
+    @Column(columnDefinition = "TEXT")
+    private String wordpressPost; // 워드프레스 작성
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;

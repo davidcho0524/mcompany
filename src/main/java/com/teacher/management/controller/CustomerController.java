@@ -33,8 +33,10 @@ public class CustomerController {
 
     @GetMapping("/new")
     public String form(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-        model.addAttribute("customer", new Customer());
-        model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
+        Customer customer = new Customer();
+        customer.setCompany(new com.teacher.management.entity.Company());
+        model.addAttribute("customer", customer);
+
         if ("XMLHttpRequest".equals(requestedWith)) {
             return "customer/form :: formFragment";
         }
@@ -43,6 +45,11 @@ public class CustomerController {
 
     @PostMapping
     public String save(Customer customer) {
+        if (customer.getCompany() != null) {
+            com.teacher.management.entity.Company processedCompany = companyService
+                    .findOrCreateCompany(customer.getCompany());
+            customer.setCompany(processedCompany);
+        }
         customerService.saveCustomer(customer);
         return "redirect:/customers";
     }
@@ -59,16 +66,13 @@ public class CustomerController {
         long start = System.currentTimeMillis();
 
         Customer customer = customerService.getCustomerById(id);
+        if (customer.getCompany() == null) {
+            customer.setCompany(new com.teacher.management.entity.Company());
+        }
         long afterCustomer = System.currentTimeMillis();
         log.info("Fetching customer took: {} ms", (afterCustomer - start));
 
         model.addAttribute("customer", customer);
-
-        var companies = companyService.getAllCompaniesForDropdown();
-        long afterCompanies = System.currentTimeMillis();
-        log.info("Fetching companies dropdown took: {} ms", (afterCompanies - afterCustomer));
-
-        model.addAttribute("companies", companies);
 
         if ("XMLHttpRequest".equals(requestedWith)) {
             return "customer/form :: formFragment";
@@ -79,6 +83,11 @@ public class CustomerController {
     @PostMapping("/{id}/edit")
     public String update(@PathVariable Long id, Customer customer) {
         customer.setId(id);
+        if (customer.getCompany() != null) {
+            com.teacher.management.entity.Company processedCompany = companyService
+                    .findOrCreateCompany(customer.getCompany());
+            customer.setCompany(processedCompany);
+        }
         customerService.saveCustomer(customer);
         return "redirect:/customers";
     }

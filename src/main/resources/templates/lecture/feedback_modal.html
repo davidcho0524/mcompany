@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="feedbackFormFragment">
+    <form th:action="@{/lectures/{id}/feedback(id=${lecture.id})}" method="post" th:object="${lecture}">
+        <div class="modal-header">
+            <h5 class="modal-title">강의 피드백 작성</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="lectureMaterials" class="form-label">강의자료</label>
+                <textarea class="form-control" id="lectureMaterials" th:field="*{lectureMaterials}" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="downloadLink" class="form-label">다운로드 링크</label>
+                <textarea class="form-control" id="downloadLink" th:field="*{downloadLink}" rows="2"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="customerEvaluation" class="form-label">고객 대상의 강의평가</label>
+                <textarea class="form-control" id="customerEvaluation" th:field="*{customerEvaluation}"
+                    rows="5"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="selfReviewContent" class="form-label">자가리뷰 (콘텐츠)</label>
+                <textarea class="form-control" id="selfReviewContent" th:field="*{selfReviewContent}"
+                    rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="selfReviewSpeed" class="form-label">자가리뷰 (속도)</label>
+                <textarea class="form-control" id="selfReviewSpeed" th:field="*{selfReviewSpeed}" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="selfReviewDelivery" class="form-label">자가리뷰 (음,어 등의 부사사용)</label>
+                <textarea class="form-control" id="selfReviewDelivery" th:field="*{selfReviewDelivery}"
+                    rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="mentorFeedback" class="form-label">멘토 피드백</label>
+                <textarea class="form-control" id="mentorFeedback" th:field="*{mentorFeedback}" rows="5"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="improvements" class="form-label">개선사항</label>
+                <textarea class="form-control" id="improvements" th:field="*{improvements}" rows="5"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="linkedinPost" class="form-label">링크드인 작성</label>
+                <textarea class="form-control" id="linkedinPost" th:field="*{linkedinPost}" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="naverBlogPost" class="form-label">네이버 블로그 작성</label>
+                <textarea class="form-control" id="naverBlogPost" th:field="*{naverBlogPost}" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="wordpressPost" class="form-label">워드프레스 작성</label>
+                <textarea class="form-control" id="wordpressPost" th:field="*{wordpressPost}" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            <button type="submit" class="btn btn-primary">저장</button>
+        </div>
+    </form>
+</div>
+
+</html>
