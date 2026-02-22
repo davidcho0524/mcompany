@@ -11,4 +11,6 @@ public interface LectureNotificationConfigRepository extends JpaRepository<Lectu
     List<LectureNotificationConfig> findByLecture(Lecture lecture);
 
     Optional<LectureNotificationConfig> findByLectureAndTimingType(Lecture lecture, String timingType);
+
+    void deleteByLectureId(Long lectureId);
 }

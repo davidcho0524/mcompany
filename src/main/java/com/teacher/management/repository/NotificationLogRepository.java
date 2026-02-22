@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationLogRepository extends JpaRepository<NotificationLog, Long> {
     boolean existsByLectureAndNotificationTypeAndStatus(Lecture lecture, String notificationType, String status);
+
+    void deleteByLectureId(Long lectureId);
 }

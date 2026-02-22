@@ -32,24 +32,31 @@ public class NotificationScheduler {
         LocalDateTime now = LocalDateTime.now();
         log.info("Notification scheduler running at {}", now);
 
-        // 1 Day Before
-        processNotifications(now, 24, "1DAY");
+        // 1 Day Before - Send at 10 AM for lectures scheduled for tomorrow
+        // Run only during the 10:00 - 10:10 window
+        if (now.getHour() == 10 && now.getMinute() < 10) {
+            LocalDateTime tomorrowStart = now.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime tomorrowEnd = now.plusDays(1).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+            log.info("Running 1 Day Before check for lectures between {} and {}", tomorrowStart, tomorrowEnd);
+            processNotifications(tomorrowStart, tomorrowEnd, "1DAY");
+        }
 
         // 1 Hour Before
-        processNotifications(now, 1, "1HOUR");
-    }
-
-    private void processNotifications(LocalDateTime now, int hoursAhead, String type) {
-        // Target: lectureAt ~= now + hoursAhead
-        // Search range +/- 30m to cover scheduler interval
-        LocalDateTime targetTime = now.plusHours(hoursAhead);
+        // Keep existing logic: Target is now + 1 hour, search window +/- 30 mins
+        LocalDateTime targetTime = now.plusHours(1);
         LocalDateTime start = targetTime.minusMinutes(30);
         LocalDateTime end = targetTime.plusMinutes(30);
+        processNotifications(start, end, "1HOUR");
+    }
 
+    private void processNotifications(LocalDateTime start, LocalDateTime end, String type) {
         List<Lecture> lectures = lectureRepository.findByNotificationYnAndLectureAtBetween("Y", start, end);
 
         if (!lectures.isEmpty()) {
-            log.info("Found {} lectures for {} notification check", lectures.size(), type);
+            log.info("Found {} lectures for {} notification check (Range: {} ~ {})", lectures.size(), type, start, end);
+        } else {
+            // Log only debug or if needed to avoid clutter, but info is fine for now
+            log.debug("No lectures found for {} notification check", type);
         }
 
         for (Lecture lecture : lectures) {

@@ -20,4 +20,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
             LocalDateTime end);
 
     long countByStatus(String status);
+
+    List<Lecture> findByCustomer(com.teacher.management.entity.Customer customer);
 }

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final com.teacher.management.repository.LectureRepository lectureRepository;
 
     public Page<Customer> getAllCustomers(Pageable pageable) {
         return customerRepository.findAll(pageable);
@@ -42,6 +43,15 @@ public class CustomerService {
 
     @Transactional
     public void deleteCustomer(Long id) {
+        Customer customer = getCustomerById(id);
+
+        // Unlink associated lectures
+        List<com.teacher.management.entity.Lecture> lectures = lectureRepository.findByCustomer(customer);
+        for (com.teacher.management.entity.Lecture lecture : lectures) {
+            lecture.setCustomer(null);
+            lectureRepository.save(lecture);
+        }
+
         customerRepository.deleteById(id);
     }
 }

@@ -1,7 +1,9 @@
 package com.teacher.management.service;
 
 import com.teacher.management.entity.Lecture;
+import com.teacher.management.repository.LectureNotificationConfigRepository;
 import com.teacher.management.repository.LectureRepository;
+import com.teacher.management.repository.NotificationLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class LectureService {
 
     private final LectureRepository lectureRepository;
+    private final NotificationLogRepository notificationLogRepository;
+    private final LectureNotificationConfigRepository lectureNotificationConfigRepository;
 
     public Page<Lecture> getAllLectures(Pageable pageable) {
         return lectureRepository.findAll(pageable);
@@ -31,6 +35,8 @@ public class LectureService {
 
     @Transactional
     public void deleteLecture(Long id) {
+        notificationLogRepository.deleteByLectureId(id);
+        lectureNotificationConfigRepository.deleteByLectureId(id);
         lectureRepository.deleteById(id);
     }
 }
