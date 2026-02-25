@@ -18,6 +18,9 @@
                                 <th>ID</th>
                                 <th>분류</th>
                                 <th>제목</th>
+                                <th>강의유형</th>
+                                <th>장소</th>
+                                <th>인원</th>
                                 <th>회사명</th>
                                 <th>담당자명</th>
                                 <th>강의일자</th>
@@ -36,6 +39,10 @@
                                 <td th:text="${lecture.category != null ? lecture.category.description : '-'}">IT
                                 </td>
                                 <td th:text="${lecture.title}">Java Spring Boot</td>
+                                <td th:text="${lecture.lectureType ?: '-'}">비대면</td>
+                                <td th:text="${lecture.location ?: '-'}">줌(Zoom)</td>
+                                <td th:text="${lecture.attendeeCount != null ? lecture.attendeeCount + '명' : '-'}">10명
+                                </td>
                                 <td th:text="${lecture.company != null ? lecture.company.name : '-'}">Samsung</td>
                                 <td th:text="${lecture.customer != null ? lecture.customer.name : '-'}">John Doe
                                 </td>
@@ -51,8 +58,8 @@
                                 </td>
                                 <td>
                                     <span class="badge"
-                                        th:classappend="${lecture.status == 'COMPLETED' ? 'bg-success' : (lecture.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}"
-                                        th:text="${lecture.status}">SCHEDULED</span>
+                                        th:classappend="${lecture.status == 'COMPLETED' ? 'bg-success' : (lecture.status == 'CONFIRMED' ? 'bg-info text-dark' : (lecture.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary'))}"
+                                        th:text="${lecture.status == 'COMPLETED' ? '완료' : (lecture.status == 'CONFIRMED' ? '확정' : (lecture.status == 'CANCELLED' ? '취소' : '예정'))}">SCHEDULED</span>
                                 </td>
                                 <td>
                                     <span class="badge"

@@ -48,7 +48,7 @@ logging:
     com.teacher.management: DEBUG
 
 solapi:
-  api-key: NCS8SJGHTGM6FUUC
-  api-secret: NJJ75DAUNKVONMKT3MC7MEISD8BF7FUM
+  api-key: NCSPSCQEIXPEPHXS
+  api-secret: UHTFJ8QERCX6SPUQXRWSZLNXDBUSXNNP
   domain: https://api.solapi.com
-  from-number: 010-4134-7463
+  from-number: 010-3213-5619

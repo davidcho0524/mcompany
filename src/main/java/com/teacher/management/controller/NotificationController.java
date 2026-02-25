@@ -83,13 +83,13 @@ public class NotificationController {
 
         // Find existing template IDs for defaults
         Long dayTemplateId = configs.stream()
-                .filter(c -> "1DAY".equals(c.getTimingType()))
+                .filter(c -> "3DAY".equals(c.getTimingType()))
                 .findFirst()
                 .map(c -> c.getTemplate().getId())
                 .orElse(null);
 
         Long hourTemplateId = configs.stream()
-                .filter(c -> "1HOUR".equals(c.getTimingType()))
+                .filter(c -> "3HOUR".equals(c.getTimingType()))
                 .findFirst()
                 .map(c -> c.getTemplate().getId())
                 .orElse(null);
@@ -106,10 +106,15 @@ public class NotificationController {
             @RequestParam(value = "hourTemplateId", required = false) Long hourTemplateId) {
 
         if (dayTemplateId != null) {
-            notificationService.saveConfig(lectureId, dayTemplateId, "1DAY");
+            notificationService.saveConfig(lectureId, dayTemplateId, "3DAY");
+        } else {
+            notificationService.deleteConfigByLectureAndTimingType(lectureId, "3DAY");
         }
+
         if (hourTemplateId != null) {
-            notificationService.saveConfig(lectureId, hourTemplateId, "1HOUR");
+            notificationService.saveConfig(lectureId, hourTemplateId, "3HOUR");
+        } else {
+            notificationService.deleteConfigByLectureAndTimingType(lectureId, "3HOUR");
         }
 
         return "redirect:/lectures";

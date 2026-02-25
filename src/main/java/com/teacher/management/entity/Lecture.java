@@ -44,6 +44,14 @@ public class Lecture {
     @Column(name = "total_hours")
     private Double totalHours;
 
+    @Column(name = "lecture_type")
+    private String lectureType; // 비대면, 대면, 하이브리드
+
+    private String location; // 강의장소
+
+    @Column(name = "attendee_count")
+    private Integer attendeeCount; // 수강인원
+
     @Column(name = "is_paid")
     private Boolean isPaid = false;
 

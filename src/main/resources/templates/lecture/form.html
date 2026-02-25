@@ -7,8 +7,11 @@
 
         <div class="card shadow-sm" style="max-width: 800px;">
             <div class="card-body">
-                <form th:action="${lecture.id == null} ? @{/lectures} : @{/lectures/{id}/edit(id=${lecture.id})}"
+                <form id="lectureForm"
+                    th:action="${lecture.id == null} ? @{/lectures} : @{/lectures/{id}/edit(id=${lecture.id})}"
                     th:object="${lecture}" method="post" th:fragment="formFragment">
+                    <input type="hidden" id="originalStatus" th:value="${lecture.status}">
+                    <input type="hidden" id="sendConfirmation" name="sendConfirmation" value="false">
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -48,6 +51,26 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="lectureType" class="form-label">강의유형</label>
+                            <select class="form-select" id="lectureType" th:field="*{lectureType}">
+                                <option value="">선택</option>
+                                <option value="비대면">비대면</option>
+                                <option value="대면">대면</option>
+                                <option value="하이브리드">하이브리드</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="location" class="form-label">강의장소</label>
+                            <input type="text" class="form-control" id="location" th:field="*{location}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="attendeeCount" class="form-label">수강인원</label>
+                            <input type="number" class="form-control" id="attendeeCount" th:field="*{attendeeCount}">
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="price" class="form-label">강의금액</label>
                             <input type="number" class="form-control" id="price" th:field="*{price}">
@@ -68,6 +91,7 @@
                             <label for="status" class="form-label">상태</label>
                             <select class="form-select" id="status" th:field="*{status}">
                                 <option value="SCHEDULED">예정</option>
+                                <option value="CONFIRMED">확정</option>
                                 <option value="COMPLETED">완료</option>
                                 <option value="CANCELLED">취소</option>
                             </select>
@@ -83,24 +107,23 @@
                         </div>
                     </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="notificationYn" class="form-label">알림여부</label>
-                    <select class="form-select" id="notificationYn" th:field="*{notificationYn}">
-                        <option value="N">No</option>
-                        <option value="Y">Yes</option>
-                    </select>
-                </div>
-            </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="notificationYn" class="form-label">알림여부</label>
+                            <select class="form-select" id="notificationYn" th:field="*{notificationYn}">
+                                <option value="N">No</option>
+                                <option value="Y">Yes</option>
+                            </select>
+                        </div>
+                    </div>
 
-            <div class="d-flex justify-content-end gap-2 mt-3">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Lecture</button>
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Lecture</button>
+                    </div>
+                </form>
             </div>
-            </form>
         </div>
-    </div>
-    </div>
 </body>
 
 </html>

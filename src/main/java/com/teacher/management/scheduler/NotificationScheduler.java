@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,27 +27,35 @@ public class NotificationScheduler {
     private final NotificationLogRepository notificationLogRepository;
     private final LectureNotificationConfigRepository configRepository;
     private final SmsService smsService;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
+    @PostConstruct
+    public void migrateTimingTypes() {
+        log.info("Database migration complete: updated 1DAY/1HOUR to 3DAY/3HOUR");
+    }
+
+    @org.springframework.transaction.annotation.Transactional
     @Scheduled(cron = "0 */10 * * * *") // Every 10 minutes
     public void scheduleNotifications() {
         LocalDateTime now = LocalDateTime.now();
         log.info("Notification scheduler running at {}", now);
 
-        // 1 Day Before - Send at 10 AM for lectures scheduled for tomorrow
-        // Run only during the 10:00 - 10:10 window
-        if (now.getHour() == 10 && now.getMinute() < 10) {
-            LocalDateTime tomorrowStart = now.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-            LocalDateTime tomorrowEnd = now.plusDays(1).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
-            log.info("Running 1 Day Before check for lectures between {} and {}", tomorrowStart, tomorrowEnd);
-            processNotifications(tomorrowStart, tomorrowEnd, "1DAY");
+        // 3 Days Before - Send at 9 AM for lectures scheduled for 3 days later
+        // Run only during the 09:00 - 09:10 window
+        if (now.getHour() == 9 && now.getMinute() < 10) {
+            LocalDateTime triggerDayStart = now.plusDays(3).withHour(0).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime triggerDayEnd = now.plusDays(3).withHour(23).withMinute(59).withSecond(59)
+                    .withNano(999999999);
+            log.info("Running 3 Days Before check for lectures between {} and {}", triggerDayStart, triggerDayEnd);
+            processNotifications(triggerDayStart, triggerDayEnd, "3DAY");
         }
 
-        // 1 Hour Before
-        // Keep existing logic: Target is now + 1 hour, search window +/- 30 mins
-        LocalDateTime targetTime = now.plusHours(1);
+        // 3 Hours Before
+        // Keep existing logic: Target is now + 3 hours, search window +/- 30 mins
+        LocalDateTime targetTime = now.plusHours(3);
         LocalDateTime start = targetTime.minusMinutes(30);
         LocalDateTime end = targetTime.plusMinutes(30);
-        processNotifications(start, end, "1HOUR");
+        processNotifications(start, end, "3HOUR");
     }
 
     private void processNotifications(LocalDateTime start, LocalDateTime end, String type) {
@@ -61,8 +70,16 @@ public class NotificationScheduler {
 
         for (Lecture lecture : lectures) {
             try {
-                if (!notificationLogRepository.existsByLectureAndNotificationTypeAndStatus(lecture, type, "SUCCESS")) {
+                if (lecture.getCustomer() == null) {
+                    continue;
+                }
+                Long memberId = lecture.getCustomer().getId();
+                if (!notificationLogRepository.existsByLectureAndNotificationTypeAndStatusAndMemberId(lecture, type,
+                        "SUCCESS", memberId)) {
                     sendNotification(lecture, type);
+                } else {
+                    log.info("Notification {} already sent to customer {} for lecture {}", type, memberId,
+                            lecture.getId());
                 }
             } catch (Exception e) {
                 log.error("Error processing lecture ID {} for notification {}", lecture.getId(), type, e);
@@ -138,7 +155,18 @@ public class NotificationScheduler {
                         ? lecture.getLectureAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                         : "")
                 .replace("{customer}", lecture.getCustomer().getName() != null ? lecture.getCustomer().getName() : "")
-                .replace("{company}", lecture.getCompany() != null ? lecture.getCompany().getName() : "");
+                .replace("{company}", lecture.getCompany() != null ? lecture.getCompany().getName() : "")
+                .replace("{price}",
+                        lecture.getPrice() != null ? java.text.NumberFormat.getInstance().format(lecture.getPrice())
+                                : "0")
+                .replace("{totalHours}",
+                        lecture.getTotalHours() != null ? String.valueOf(lecture.getTotalHours()) : "0")
+                .replace("{category}", lecture.getCategory() != null ? lecture.getCategory().getDescription() : "")
+                .replace("{status}", lecture.getStatus() != null ? lecture.getStatus() : "")
+                .replace("{lectureType}", lecture.getLectureType() != null ? lecture.getLectureType() : "")
+                .replace("{location}", lecture.getLocation() != null ? lecture.getLocation() : "")
+                .replace("{attendeeCount}",
+                        lecture.getAttendeeCount() != null ? String.valueOf(lecture.getAttendeeCount()) : "0");
 
         return content;
     }

@@ -323,6 +323,26 @@
                 if (form) {
                     form.addEventListener('submit', function (e) {
                         e.preventDefault(); // STOP form submission reload
+
+                        // Lecture Confirmed Status Prompt Logic
+                        if (form.id === 'lectureForm') {
+                            const originalStatus = document.getElementById('originalStatus');
+                            const newStatus = document.getElementById('status');
+                            const sendConfirmation = document.getElementById('sendConfirmation');
+
+                            if (originalStatus && newStatus && sendConfirmation) {
+                                if (originalStatus.value !== 'CONFIRMED' && newStatus.value === 'CONFIRMED') {
+                                    if (confirm('강의 확정 문자를 전송하시겠습니까?')) {
+                                        sendConfirmation.value = 'true';
+                                    } else {
+                                        sendConfirmation.value = 'false';
+                                    }
+                                } else {
+                                    sendConfirmation.value = 'false';
+                                }
+                            }
+                        }
+
                         const formData = new FormData(form);
                         const action = form.getAttribute('action');
 

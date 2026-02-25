@@ -24,6 +24,7 @@ public class LectureController {
     private final LectureService lectureService;
     private final CompanyService companyService;
     private final CustomerService customerService;
+    private final com.teacher.management.service.NotificationService notificationService;
 
     @GetMapping
     public String list(Model model,
@@ -45,8 +46,12 @@ public class LectureController {
     }
 
     @PostMapping
-    public String save(Lecture lecture) {
+    public String save(Lecture lecture,
+            @org.springframework.web.bind.annotation.RequestParam(value = "sendConfirmation", defaultValue = "false") boolean sendConfirmation) {
         lectureService.saveLecture(lecture);
+        if (sendConfirmation && "CONFIRMED".equals(lecture.getStatus())) {
+            notificationService.sendTemplateByName(lecture, "강의 확정 문자");
+        }
         return "redirect:/lectures";
     }
 
@@ -71,7 +76,8 @@ public class LectureController {
     }
 
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable Long id, Lecture lecture) {
+    public String update(@PathVariable Long id, Lecture lecture,
+            @org.springframework.web.bind.annotation.RequestParam(value = "sendConfirmation", defaultValue = "false") boolean sendConfirmation) {
         Lecture existingLecture = lectureService.getLectureById(id);
         existingLecture.setTitle(lecture.getTitle());
         existingLecture.setCategory(lecture.getCategory());
@@ -82,9 +88,17 @@ public class LectureController {
         existingLecture.setStatus(lecture.getStatus());
         existingLecture.setCompany(lecture.getCompany());
         existingLecture.setCustomer(lecture.getCustomer());
+        existingLecture.setLectureType(lecture.getLectureType());
+        existingLecture.setLocation(lecture.getLocation());
+        existingLecture.setAttendeeCount(lecture.getAttendeeCount());
         existingLecture.setNotificationYn(lecture.getNotificationYn() != null ? lecture.getNotificationYn() : "N");
 
         lectureService.saveLecture(existingLecture);
+
+        if (sendConfirmation && "CONFIRMED".equals(existingLecture.getStatus())) {
+            notificationService.sendTemplateByName(existingLecture, "강의 확정 문자");
+        }
+
         return "redirect:/lectures";
     }
 

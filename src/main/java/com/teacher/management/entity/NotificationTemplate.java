@@ -29,7 +29,7 @@ public class NotificationTemplate {
     private String messageType; // SMS, KAKAO
 
     @Lob
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     // Kakao Specific
