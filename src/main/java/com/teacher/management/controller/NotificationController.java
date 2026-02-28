@@ -94,8 +94,15 @@ public class NotificationController {
                 .map(c -> c.getTemplate().getId())
                 .orElse(null);
 
+        Long oneHourTemplateId = configs.stream()
+                .filter(c -> "1HOUR".equals(c.getTimingType()))
+                .findFirst()
+                .map(c -> c.getTemplate().getId())
+                .orElse(null);
+
         model.addAttribute("dayTemplateId", dayTemplateId);
         model.addAttribute("hourTemplateId", hourTemplateId);
+        model.addAttribute("oneHourTemplateId", oneHourTemplateId);
 
         return "notifications/mapping_form";
     }
@@ -103,7 +110,8 @@ public class NotificationController {
     @PostMapping("/mappings/{lectureId}/save")
     public String saveLectureMapping(@PathVariable Long lectureId,
             @RequestParam(value = "dayTemplateId", required = false) Long dayTemplateId,
-            @RequestParam(value = "hourTemplateId", required = false) Long hourTemplateId) {
+            @RequestParam(value = "hourTemplateId", required = false) Long hourTemplateId,
+            @RequestParam(value = "oneHourTemplateId", required = false) Long oneHourTemplateId) {
 
         if (dayTemplateId != null) {
             notificationService.saveConfig(lectureId, dayTemplateId, "3DAY");
@@ -115,6 +123,12 @@ public class NotificationController {
             notificationService.saveConfig(lectureId, hourTemplateId, "3HOUR");
         } else {
             notificationService.deleteConfigByLectureAndTimingType(lectureId, "3HOUR");
+        }
+
+        if (oneHourTemplateId != null) {
+            notificationService.saveConfig(lectureId, oneHourTemplateId, "1HOUR");
+        } else {
+            notificationService.deleteConfigByLectureAndTimingType(lectureId, "1HOUR");
         }
 
         return "redirect:/lectures";

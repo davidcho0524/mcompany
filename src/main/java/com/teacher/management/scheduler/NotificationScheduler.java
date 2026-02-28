@@ -49,6 +49,13 @@ public class NotificationScheduler {
         LocalDateTime start = targetTime.minusMinutes(30);
         LocalDateTime end = targetTime.plusMinutes(30);
         processNotifications(start, end, "3HOUR");
+
+        // 1 Hour Before
+        // Target is now + 1 hour, search window +/- 30 mins
+        LocalDateTime targetTime1h = now.plusHours(1);
+        LocalDateTime start1h = targetTime1h.minusMinutes(30);
+        LocalDateTime end1h = targetTime1h.plusMinutes(30);
+        processNotifications(start1h, end1h, "1HOUR");
     }
 
     private void processNotifications(LocalDateTime start, LocalDateTime end, String type) {

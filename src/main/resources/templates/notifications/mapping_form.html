@@ -60,6 +60,25 @@
         <div class="form-text">강의 시작 3시간 전에 발송됩니다.</div>
     </div>
 
+    <div class="mb-3">
+        <label for="oneHourTemplate" class="form-label">강의 1시간전 알림</label>
+        <div class="input-group">
+            <select class="form-select" id="oneHourTemplate" name="oneHourTemplateId">
+                <option value="">-- No Notification --</option>
+                <option th:each="t : ${templates}" th:value="${t.id}"
+                    th:text="${t.name} + ' (' + ${t.messageType} + ')'" th:selected="${t.id == oneHourTemplateId}">
+                    Template Name
+                </option>
+            </select>
+            <button type="button" class="btn btn-outline-secondary"
+                th:onclick="'sendNow(\'oneHourTemplate\', ' + ${lecture.id} + ')'"
+                th:disabled="${lecture.customer == null || lecture.customer.phone == null || lecture.customer.phone == ''}">
+                <i class="bi bi-send"></i> 즉시발송
+            </button>
+        </div>
+        <div class="form-text">강의 시작 1시간 전에 발송됩니다.</div>
+    </div>
+
     <div class="d-flex justify-content-end gap-2 mt-4">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
         <button type="submit" class="btn btn-primary">저장</button>

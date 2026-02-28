@@ -40,7 +40,7 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="customer" class="form-label">강사/POC</label>
+                            <label for="customer" class="form-label">담당자</label>
                             <select class="form-select" id="customer" name="customer">
                                 <option value="">Select Instructor/POC</option>
                                 <option th:each="cust : ${customers}" th:value="${cust.id}" th:text="${cust.name}"
