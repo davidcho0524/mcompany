@@ -41,6 +41,9 @@ public class NotificationLog {
     @Column(name = "member_id")
     private Long memberId;
 
+    @Column(name = "original_lecture_name")
+    private String originalLectureName;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime sentAt;

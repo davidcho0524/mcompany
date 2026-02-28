@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,25 +26,19 @@ public class NotificationScheduler {
     private final NotificationLogRepository notificationLogRepository;
     private final LectureNotificationConfigRepository configRepository;
     private final SmsService smsService;
-    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
-
-    @PostConstruct
-    public void migrateTimingTypes() {
-        log.info("Database migration complete: updated 1DAY/1HOUR to 3DAY/3HOUR");
-    }
 
     @org.springframework.transaction.annotation.Transactional
-    @Scheduled(cron = "0 */10 * * * *") // Every 10 minutes
+    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul") // Every 10 minutes
     public void scheduleNotifications() {
         LocalDateTime now = LocalDateTime.now();
         log.info("Notification scheduler running at {}", now);
 
-        // 3 Days Before - Send at 9 AM for lectures scheduled for 3 days later
-        // Run only during the 09:00 - 09:10 window
-        if (now.getHour() == 9 && now.getMinute() < 10) {
-            LocalDateTime triggerDayStart = now.plusDays(3).withHour(0).withMinute(0).withSecond(0).withNano(0);
-            LocalDateTime triggerDayEnd = now.plusDays(3).withHour(23).withMinute(59).withSecond(59)
-                    .withNano(999999999);
+        // 3 Days Before - Send at 20:40 for lectures scheduled for 3 days later
+        // Run only during the 20:40 - 20:50 window
+        if (now.getHour() == 20 && now.getMinute() >= 40) {
+            // "오늘" 기준으로 정확히 3일(DAY) 뒤의 00:00:00 ~ 23:59:59 조회
+            LocalDateTime triggerDayStart = now.plusDays(3).toLocalDate().atStartOfDay();
+            LocalDateTime triggerDayEnd = now.plusDays(3).toLocalDate().atTime(23, 59, 59, 999999999);
             log.info("Running 3 Days Before check for lectures between {} and {}", triggerDayStart, triggerDayEnd);
             processNotifications(triggerDayStart, triggerDayEnd, "3DAY");
         }
@@ -88,6 +81,8 @@ public class NotificationScheduler {
     }
 
     private void sendNotification(Lecture lecture, String type) {
+        log.info("Starting sendNotification for lecture_id={}, type={}", lecture.getId(), type);
+
         String customerPhone = lecture.getCustomer().getPhone();
         if (customerPhone == null || customerPhone.isEmpty()) {
             log.warn("Customer phone missing for lecture {}", lecture.getId());
@@ -102,6 +97,8 @@ public class NotificationScheduler {
             log.info("No notification config found for lecture {} type {}", lecture.getId(), type);
             return;
         }
+
+        log.info("Found notification config for lecture {}, configId={}", lecture.getId(), config.getId());
 
         NotificationTemplate template = config.getTemplate();
         if (template == null) {
@@ -125,6 +122,7 @@ public class NotificationScheduler {
             logEntry.setMessageId(messageId);
             logEntry.setMessageType(template.getMessageType());
             logEntry.setMemberId(lecture.getCustomer().getId());
+            logEntry.setOriginalLectureName(lecture.getTitle());
             logEntry.setSentAt(LocalDateTime.now());
             notificationLogRepository.save(logEntry);
 
@@ -139,6 +137,7 @@ public class NotificationScheduler {
             logEntry.setFailReason(e.getMessage());
             logEntry.setMessageType(template.getMessageType());
             logEntry.setMemberId(lecture.getCustomer().getId());
+            logEntry.setOriginalLectureName(lecture.getTitle());
             logEntry.setSentAt(LocalDateTime.now());
             notificationLogRepository.save(logEntry);
         }

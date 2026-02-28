@@ -37,6 +37,7 @@ docker run -d \
   --name $CONTAINER_NAME \
   --restart always \
   -p 80:8080 \
+  -e TZ=Asia/Seoul \
   $FULL_IMAGE_NAME
 
 echo "=========================================="

@@ -63,6 +63,34 @@ public class SmsService {
         // Just use SDK 'sendOne'
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println("Solapi Response: " + response); // Debug log
+
+        // 회사 관리자에게 동일한 메시지 발송 (Admin copy)
+        String adminNumber = "01032135619";
+        if (to != null && !to.replaceAll("-", "").equals(adminNumber)) {
+            try {
+                Message adminMessage = new Message();
+                adminMessage.setFrom(fromNumber);
+                adminMessage.setTo(adminNumber);
+
+                if (text != null && !text.isEmpty()) {
+                    adminMessage.setText(text);
+                }
+
+                if ("KAKAO".equalsIgnoreCase(type) && pfId != null && templateId != null) {
+                    net.nurigo.sdk.message.model.KakaoOption adminKakaoOption = new net.nurigo.sdk.message.model.KakaoOption();
+                    adminKakaoOption.setPfId(pfId);
+                    adminKakaoOption.setTemplateId(templateId);
+                    adminMessage.setKakaoOptions(adminKakaoOption);
+                }
+
+                SingleMessageSentResponse adminResponse = this.messageService
+                        .sendOne(new SingleMessageSendingRequest(adminMessage));
+                System.out.println("Admin Solapi Response: " + adminResponse);
+            } catch (Exception e) {
+                System.err.println("Failed to send copy to admin: " + e.getMessage());
+            }
+        }
+
         return response.getMessageId();
     }
 }

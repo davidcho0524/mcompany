@@ -38,9 +38,11 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <span class="fw-bold" th:text="${log.lecture.customer.name}">Hong Gil-dong</span>
+                                <span class="fw-bold" th:text="${log.lecture?.customer?.name ?: '알 수 없음'}">Hong
+                                    Gil-dong</span>
+                            </div>
                         </td>
-                        <td th:text="${log.lecture.title}">Java Basics</td>
+                        <td th:text="${log.originalLectureName ?: log.lecture?.title ?: '삭제된 강의'}">Java Basics</td>
                         <td>
                             <span class="badge" th:classappend="${log.status == 'SUCCESS' ? 'bg-success' : 'bg-danger'}"
                                 th:text="${log.status}">SUCCESS</span>

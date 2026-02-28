@@ -35,7 +35,14 @@ public class LectureService {
 
     @Transactional
     public void deleteLecture(Long id) {
-        notificationLogRepository.deleteByLectureId(id);
+        // notificationLogRepository.deleteByLectureId(id); -> 이제 삭제하지 않고 참조를 끊습니다.
+        java.util.List<com.teacher.management.entity.NotificationLog> logs = notificationLogRepository
+                .findByLectureId(id);
+        for (com.teacher.management.entity.NotificationLog log : logs) {
+            log.setLecture(null);
+            notificationLogRepository.save(log);
+        }
+
         lectureNotificationConfigRepository.deleteByLectureId(id);
         lectureRepository.deleteById(id);
     }
