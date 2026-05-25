@@ -1,0 +1,22 @@
+package com.teacher.management.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Map the /html/** URL path to the local uploads/html directory
+        Path htmlUploadDir = Paths.get("uploads/html");
+        String htmlUploadPath = htmlUploadDir.toFile().getAbsolutePath();
+        
+        registry.addResourceHandler("/html/**")
+                .addResourceLocations("file:" + htmlUploadPath + "/");
+    }
+}
